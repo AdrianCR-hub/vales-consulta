@@ -1,6 +1,7 @@
 package com.adriancr.vales.report;
 
 import java.math.BigDecimal;
+import java.sql.Types;
 import java.util.List;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -76,8 +77,11 @@ public class ReporteGastosService {
     }
 
     private static MapSqlParameterSource params(Integer anio, Integer mes, String municipio) {
-        return new MapSqlParameterSource().addValue("anio", anio).addValue("mes", mes)
-            .addValue("municipio", municipio);
+        // PostgreSQL necesita conocer el tipo SQL aunque los filtros opcionales sean NULL.
+        return new MapSqlParameterSource()
+            .addValue("anio", anio, Types.INTEGER)
+            .addValue("mes", mes, Types.INTEGER)
+            .addValue("municipio", municipio, Types.VARCHAR);
     }
 
     private static String limpio(String value) {
