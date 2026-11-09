@@ -20,7 +20,7 @@
       <section class="intro">
         <p class="eyebrow">CONSULTAS · GASTOS</p>
         <h1>Gastos de vales</h1>
-        <p>Consulta el consumo registrado por período y municipio.</p>
+        <p>Consulta el consumo por período y por localidad operativa registrada en cada vale.</p>
       </section>
 
       <section class="panel filter-panel" aria-labelledby="filter-title">
@@ -41,12 +41,12 @@
               <option value="11">Noviembre</option><option value="12">Diciembre</option>
             </select>
           </label>
-          <label class="municipality-field">Municipio / localidad
-            <select id="municipality" name="municipio"><option value="">Todos los municipios</option></select>
+          <label class="locality-field">Localidad del vale
+            <select id="locality" name="localidad"><option value="">Todas las localidades</option></select>
           </label>
           <button id="search" type="submit"><span aria-hidden="true">⌕</span> Consultar gastos</button>
         </form>
-        <p class="hint">El gasto se asigna al mes de consumo, no al mes de emisión.</p>
+        <p class="hint">La localidad se agrupa dentro de su zonal operativa; no representa una clasificación de provincias y distritos. El gasto se asigna al mes de consumo.</p>
       </section>
 
       <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
@@ -58,9 +58,9 @@
         </div>
 
         <section class="panel table-panel">
-          <div class="panel-heading table-heading"><div><p class="eyebrow">RESUMEN</p><h2>Gasto por municipio</h2></div><span id="period-label" class="period-label"></span></div>
-          <div class="table-wrap"><table><thead><tr><th>Municipio / localidad</th><th class="numeric">Vales</th><th class="numeric">Consumo (gal)</th><th class="numeric">Gasto total</th></tr></thead><tbody id="summary-rows"></tbody></table></div>
-          <p id="summary-empty" class="empty" hidden>No hay vales usados para los filtros seleccionados.</p>
+          <div class="panel-heading table-heading"><div><p class="eyebrow">RESUMEN</p><h2>Gasto por localidad</h2></div><span id="period-label" class="period-label"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>Localidad del vale</th><th class="numeric">Vales</th><th class="numeric">Consumo (gal)</th><th class="numeric">Gasto total</th></tr></thead><tbody id="summary-rows"></tbody></table></div>
+          <p id="summary-empty" class="empty" hidden>No hay vales usados para las localidades y el período seleccionados.</p>
         </section>
 
         <section class="panel table-panel detail-panel">

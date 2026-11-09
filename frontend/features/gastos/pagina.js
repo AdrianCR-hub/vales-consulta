@@ -1,4 +1,4 @@
-import { consultarDetalle, consultarMunicipios, consultarResumen, consultarTotal } from "../../api/gastos-api.js";
+import { consultarDetalle, consultarLocalidades, consultarResumen, consultarTotal } from "../../api/gastos-api.js";
 
 const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const money = (value) => new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" }).format(value ?? 0);
@@ -15,18 +15,26 @@ document.querySelector("#month").value = String(current.getMonth() + 1);
 loadMunicipios();
 
 async function loadMunicipios() {
-  const select = document.querySelector("#municipality");
+  const select = document.querySelector("#locality");
   try {
-    const rows = await consultarMunicipios();
+    const rows = await consultarLocalidades();
+    const groups = new Map();
     for (const row of rows) {
+      let group = groups.get(row.idZona);
+      if (!group) {
+        group = document.createElement("optgroup");
+        group.label = row.zona;
+        groups.set(row.idZona, group);
+        select.append(group);
+      }
       const option = document.createElement("option");
       option.value = row.idLocalidad;
       option.textContent = row.nombre;
-      select.append(option);
+      group.append(option);
     }
   } catch (error) {
     feedback.className = "feedback error";
-    feedback.textContent = `No se pudo cargar la lista de municipios: ${error.message}.`;
+    feedback.textContent = `No se pudo cargar el catálogo de localidades: ${error.message}.`;
   }
 }
 
@@ -35,7 +43,7 @@ form.addEventListener("submit", async (event) => {
   const filters = {
     anio: document.querySelector("#year").value,
     mes: document.querySelector("#month").value,
-    municipio: document.querySelector("#municipality").value.trim(),
+    localidad: document.querySelector("#locality").value,
   };
   feedback.className = "feedback loading";
   feedback.textContent = "Consultando la base de datos…";
@@ -66,7 +74,7 @@ function render(summary, total, details, filters) {
   document.querySelector("#period-label").textContent = period;
 
   const summaryRows = document.querySelector("#summary-rows");
-  summaryRows.innerHTML = summary.map((row) => `<tr><td><span class="municipality-dot"></span>${safe(row.municipio)}</td><td class="numeric">${number(row.cantidadVales, 0)}</td><td class="numeric">${number(row.galonesConsumidos)}</td><td class="numeric amount">${money(row.gastoTotal)}</td></tr>`).join("");
+  summaryRows.innerHTML = summary.map((row) => `<tr><td><span class="municipality-dot"></span>${safe(row.localidad)}</td><td class="numeric">${number(row.cantidadVales, 0)}</td><td class="numeric">${number(row.galonesConsumidos)}</td><td class="numeric amount">${money(row.gastoTotal)}</td></tr>`).join("");
   document.querySelector("#summary-empty").hidden = summary.length > 0;
 
   const detailRows = document.querySelector("#detail-rows");

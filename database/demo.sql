@@ -5,12 +5,24 @@
 BEGIN;
 
 INSERT INTO logis_zonal (id_zona, nom_zona) VALUES
-    ('01', 'PIURA'), ('03', 'PAITA'), ('04', 'SULLANA'), ('05', 'TALARA')
+    ('01', 'PIURA'), ('02', 'CHULUCANAS'), ('03', 'PAITA'),
+    ('04', 'SULLANA'), ('05', 'TALARA'), ('08', 'SECHURA')
 ON CONFLICT (id_zona) DO NOTHING;
 
 INSERT INTO logis_localidad (id_localidad, nom_localidad, id_zona) VALUES
-    ('05', 'CASTILLA', '01'), ('13', 'PAITA', '03'),
-    ('28', 'SULLANA', '04'), ('37', 'TALARA-PARIÑAS', '05')
+    ('01', 'ZONAL PIURA', '01'), ('02', 'PIURA', '01'), ('03', 'CATACAOS', '01'),
+    ('04', 'LAS LOMAS', '01'), ('05', 'CASTILLA', '01'), ('46', 'SEDE CENTRAL', '01'),
+    ('07', 'ZONAL CHULUCANAS', '02'), ('08', 'CHULUCANAS', '02'), ('09', 'MORROPON', '02'),
+    ('12', 'ZONAL PAITA', '03'), ('13', 'PAITA', '03'), ('14', 'AMOTAPE', '03'),
+    ('15', 'EL ARENAL', '03'), ('16', 'COLAN', '03'), ('17', 'LA HUACA', '03'),
+    ('18', 'TAMARINDO', '03'), ('19', 'VICHAYAL', '03'), ('20', 'VIVIATE', '03'),
+    ('21', 'PUEBLO NUEVO COLAN', '03'), ('22', 'EL TAMBO', '03'), ('23', 'MIRAMAR', '03'),
+    ('24', 'YACILA', '03'), ('27', 'ZONAL SULLANA', '04'), ('28', 'SULLANA', '04'),
+    ('30', 'LANCONES', '04'), ('31', 'MARCAVELICA', '04'), ('32', 'QUERECOTILLO', '04'),
+    ('33', 'SALITRAL', '04'), ('36', 'ZONAL TALARA', '05'), ('37', 'TALARA-PARIÑAS', '05'),
+    ('38', 'NEGRITOS', '05'), ('39', 'MANCORA', '05'), ('40', 'LOS ORGANOS', '05'),
+    ('41', 'EL ALTO', '05'), ('47', 'ZONAL SECHURA', '08'), ('48', 'SECHURA', '08'),
+    ('49', 'VICE', '08')
 ON CONFLICT (id_localidad) DO NOTHING;
 
 INSERT INTO logis_centro_costo (cod_centro_costo, descripcion) VALUES

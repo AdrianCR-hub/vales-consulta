@@ -19,37 +19,40 @@ public class ReporteGastosController {
         this.service = service;
     }
 
-    /** Resumen agrupado por año, mes y municipio (localidad). */
+    /** Resumen agrupado por año, mes y localidad operativa del vale. */
     @GetMapping
-    public List<GastoMunicipio> resumen(@RequestParam(required = false) Integer anio,
+    public List<GastoLocalidad> resumen(@RequestParam(required = false) Integer anio,
                                         @RequestParam(required = false) Integer mes,
+                                        @RequestParam(required = false) String localidad,
                                         @RequestParam(required = false) String municipio) {
         validar(anio, mes);
-        return service.resumen(anio, mes, municipio);
+        return service.resumen(anio, mes, localidad != null ? localidad : municipio);
     }
 
-    /** Localidades disponibles para el selector del reporte. */
-    @GetMapping("/municipios")
-    public List<Municipio> municipios() {
-        return service.municipios();
+    /** Catálogo de localidades, ordenadas y agrupadas por zonal. */
+    @GetMapping({"/localidades", "/municipios"})
+    public List<Localidad> localidades() {
+        return service.localidades();
     }
 
     /** Detalle de los vales usados, con suministro, para el período indicado. */
     @GetMapping("/detalle")
     public List<DetalleVale> detalle(@RequestParam(required = false) Integer anio,
                                      @RequestParam(required = false) Integer mes,
+                                     @RequestParam(required = false) String localidad,
                                      @RequestParam(required = false) String municipio) {
         validar(anio, mes);
-        return service.detalle(anio, mes, municipio);
+        return service.detalle(anio, mes, localidad != null ? localidad : municipio);
     }
 
     /** Total final consolidado con los mismos filtros opcionales. */
     @GetMapping("/total")
     public TotalGastos total(@RequestParam(required = false) Integer anio,
                              @RequestParam(required = false) Integer mes,
+                             @RequestParam(required = false) String localidad,
                              @RequestParam(required = false) String municipio) {
         validar(anio, mes);
-        return service.total(anio, mes, municipio);
+        return service.total(anio, mes, localidad != null ? localidad : municipio);
     }
 
     private static void validar(Integer anio, Integer mes) {
@@ -59,9 +62,9 @@ public class ReporteGastosController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El mes debe estar entre 1 y 12.");
     }
 
-    public record GastoMunicipio(int anio, int mes, String municipio, long cantidadVales,
+    public record GastoLocalidad(int anio, int mes, String localidad, long cantidadVales,
                                  BigDecimal galonesConsumidos, BigDecimal gastoTotal) {}
-    public record Municipio(String idLocalidad, String nombre) {}
+    public record Localidad(String idZona, String zona, String idLocalidad, String nombre) {}
     public record DetalleVale(String codigoVale, LocalDate fechaConsumo, String municipio,
                               String suministro, BigDecimal cantidadConsumida,
                               BigDecimal precioReal, BigDecimal importe, String ticket) {}
