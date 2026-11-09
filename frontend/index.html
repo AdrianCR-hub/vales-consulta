@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4f7f5" />
+    <title>Control de gastos | Vales</title>
+    <link rel="stylesheet" href="styles/gastos.css" />
+    <script type="module" src="features/gastos/pagina.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Inicio de Vales">
+        <span class="brand-mark" aria-hidden="true">V</span>
+        <span>VALES<span class="brand-sub">CONTROL DE COMBUSTIBLE</span></span>
+      </a>
+      <span class="connection"><i></i> Servicio de reportes</span>
+    </header>
+    <main class="shell">
+      <section class="intro">
+        <p class="eyebrow">CONSULTAS · GASTOS</p>
+        <h1>Gastos de vales</h1>
+        <p>Consulta el consumo registrado por período y municipio.</p>
+      </section>
+
+      <section class="panel filter-panel" aria-labelledby="filter-title">
+        <div class="panel-heading">
+          <div><p class="eyebrow">FILTROS</p><h2 id="filter-title">Período de consulta</h2></div>
+          <span class="used-badge"><span></span> Solo vales usados</span>
+        </div>
+        <form id="filters" class="filters">
+          <label>Año <input id="year" name="anio" type="number" min="1900" max="9999" required /></label>
+          <label>Mes
+            <select id="month" name="mes">
+              <option value="">Todos los meses</option>
+              <option value="1">Enero</option><option value="2">Febrero</option>
+              <option value="3">Marzo</option><option value="4">Abril</option>
+              <option value="5">Mayo</option><option value="6">Junio</option>
+              <option value="7">Julio</option><option value="8">Agosto</option>
+              <option value="9">Septiembre</option><option value="10">Octubre</option>
+              <option value="11">Noviembre</option><option value="12">Diciembre</option>
+            </select>
+          </label>
+          <label class="municipality-field">Municipio / localidad <input id="municipality" name="municipio" type="search" placeholder="Todos los municipios" /></label>
+          <button id="search" type="submit"><span aria-hidden="true">⌕</span> Consultar gastos</button>
+        </form>
+        <p class="hint">El gasto se asigna al mes de consumo, no al mes de emisión.</p>
+      </section>
+
+      <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+      <section id="results" hidden>
+        <div class="summary-grid" aria-label="Totales del período">
+          <article class="metric metric-primary"><span class="metric-icon">S/</span><div><p>Gasto total</p><strong id="total-amount">S/ 0,00</strong></div></article>
+          <article class="metric"><span class="metric-icon">#</span><div><p>Vales usados</p><strong id="total-vouchers">0</strong></div></article>
+          <article class="metric"><span class="metric-icon">↗</span><div><p>Consumo total</p><strong id="total-gallons">0 gal</strong></div></article>
+        </div>
+
+        <section class="panel table-panel">
+          <div class="panel-heading table-heading"><div><p class="eyebrow">RESUMEN</p><h2>Gasto por municipio</h2></div><span id="period-label" class="period-label"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>Municipio / localidad</th><th class="numeric">Vales</th><th class="numeric">Consumo (gal)</th><th class="numeric">Gasto total</th></tr></thead><tbody id="summary-rows"></tbody></table></div>
+          <p id="summary-empty" class="empty" hidden>No hay vales usados para los filtros seleccionados.</p>
+        </section>
+
+        <section class="panel table-panel detail-panel">
+          <div class="panel-heading table-heading"><div><p class="eyebrow">MOVIMIENTOS</p><h2>Detalle de vales</h2></div><span id="detail-count" class="period-label"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>Vale</th><th>Fecha de consumo</th><th>Municipio</th><th>Suministro</th><th class="numeric">Cantidad</th><th class="numeric">Precio real</th><th class="numeric">Importe</th><th>Ticket</th></tr></thead><tbody id="detail-rows"></tbody></table></div>
+          <p id="detail-empty" class="empty" hidden>No se encontraron vales para este período.</p>
+        </section>
+      </section>
+      <footer>Consulta de gastos de vales · Datos obtenidos del servicio PostgreSQL</footer>
+    </main>
+  </body>
+</html>
