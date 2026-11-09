@@ -1,6 +1,7 @@
 -- Datos ficticios de demostración inspirados en los casos del proyecto de referencia.
 -- Ejecutar después de schema.sql dentro de la base `vales`.
--- Genera consumos para el mes actual y los tres meses anteriores. Es idempotente.
+-- Genera consumos para todas las localidades, en el mes actual y los tres meses anteriores.
+-- Se puede volver a ejecutar: no duplica códigos de vale existentes.
 
 BEGIN;
 
@@ -29,65 +30,92 @@ INSERT INTO logis_centro_costo (cod_centro_costo, descripcion) VALUES
     ('90211214', 'Centro de costo de demostración - Piura'),
     ('90214201', 'Centro de costo de demostración - Sullana'),
     ('90321109', 'Centro de costo de demostración - Paita'),
-    ('90421109', 'Centro de costo de demostración - Talara')
+    ('90421109', 'Centro de costo de demostración - Talara'),
+    ('90214202', 'Centro de costo de demostración - Chulucanas'),
+    ('90321110', 'Centro de costo de demostración - Sechura')
 ON CONFLICT (cod_centro_costo) DO NOTHING;
 
 INSERT INTO unidad_organizativa (cod_uni_organizativa, unidad_organizativa) VALUES
     ('DEMO-PIU', 'Unidad de demostración Piura'),
     ('DEMO-SUL', 'Unidad de demostración Sullana'),
     ('DEMO-PAI', 'Unidad de demostración Paita'),
-    ('DEMO-TAL', 'Unidad de demostración Talara')
+    ('DEMO-TAL', 'Unidad de demostración Talara'),
+    ('DEMO-CHU', 'Unidad de demostración Chulucanas'),
+    ('DEMO-SEC', 'Unidad de demostración Sechura')
 ON CONFLICT (cod_uni_organizativa) DO NOTHING;
 
 INSERT INTO persona (codigo_persona, nombre, ap_paterno) VALUES
     (990001, 'Rosa', 'Demo Piura'), (990002, 'Luis', 'Demo Sullana'),
-    (990003, 'Julia', 'Demo Paita'), (990004, 'Mario', 'Demo Talara')
+    (990003, 'Julia', 'Demo Paita'), (990004, 'Mario', 'Demo Talara'),
+    (990005, 'Hugo', 'Demo Chulucanas'), (990006, 'Clara', 'Demo Sechura')
 ON CONFLICT (codigo_persona) DO NOTHING;
 
 SELECT setval(pg_get_serial_sequence('persona', 'codigo_persona'),
-              GREATEST((SELECT COALESCE(MAX(codigo_persona), 1) FROM persona), 990004), true);
+              GREATEST((SELECT COALESCE(MAX(codigo_persona), 1) FROM persona), 990006), true);
 
 INSERT INTO trabajador (dni, codigo_persona, centro_costo, cod_uni_organizativa) VALUES
     ('90000001', 990001, '90211214', 'DEMO-PIU'),
     ('90000002', 990002, '90214201', 'DEMO-SUL'),
     ('90000011', 990003, '90321109', 'DEMO-PAI'),
-    ('90000014', 990004, '90421109', 'DEMO-TAL')
+    ('90000014', 990004, '90421109', 'DEMO-TAL'),
+    ('90000022', 990005, '90214202', 'DEMO-CHU'),
+    ('90000048', 990006, '90321110', 'DEMO-SEC')
 ON CONFLICT (dni) DO NOTHING;
 
 INSERT INTO proveedor (cod_proveedor, razon_social) VALUES
     ('20000000001', 'Grifo Los Algarrobos (demo)'),
     ('20000000002', 'Estación Santa Elena (demo)'),
     ('20000000004', 'Estación Puerto Paita (demo)'),
-    ('20000000005', 'Grifo Costa Talara (demo)')
+    ('20000000005', 'Grifo Costa Talara (demo)'),
+    ('20000000006', 'Grifo Chulucanas (demo)'),
+    ('20000000008', 'Estación Sechura (demo)')
 ON CONFLICT (cod_proveedor) DO NOTHING;
 
 INSERT INTO logis_contrato_vale (cod_contrato, ruc, monto_total, fecha_inicio, fecha_fin, observacion) VALUES
     ('DEMO-PIU', '20000000001', 15000, DATE '2020-01-01', DATE '2099-12-31', 'Contrato ficticio para pruebas'),
     ('DEMO-SUL', '20000000002',  8000, DATE '2020-01-01', DATE '2099-12-31', 'Contrato ficticio para pruebas'),
     ('DEMO-PAI', '20000000004',  9000, DATE '2020-01-01', DATE '2099-12-31', 'Contrato ficticio para pruebas'),
-    ('DEMO-TAL', '20000000005', 10000, DATE '2020-01-01', DATE '2099-12-31', 'Contrato ficticio para pruebas')
+    ('DEMO-TAL', '20000000005', 10000, DATE '2020-01-01', DATE '2099-12-31', 'Contrato ficticio para pruebas'),
+    ('DEMO-CHU', '20000000006',  8500, DATE '2020-01-01', DATE '2099-12-31', 'Contrato ficticio para pruebas'),
+    ('DEMO-SEC', '20000000008',  7500, DATE '2020-01-01', DATE '2099-12-31', 'Contrato ficticio para pruebas')
 ON CONFLICT (cod_contrato) DO NOTHING;
 
 INSERT INTO logis_unidad_maquinaria (codigo, descripcion, tipo_vehiculo, placa) VALUES
     (9901, 'Unidad de mantenimiento Piura (demo)', 'Camioneta', 'DEM-101'),
     (9902, 'Unidad operativa Sullana (demo)', 'Camioneta', 'DEM-202'),
     (9903, 'Unidad operativa Paita (demo)', 'Camioneta', 'DEM-303'),
-    (9904, 'Unidad de servicio Talara (demo)', 'Camión', 'DEM-404')
+    (9904, 'Unidad de servicio Talara (demo)', 'Camión', 'DEM-404'),
+    (9905, 'Unidad operativa Chulucanas (demo)', 'Camioneta', 'DEM-505'),
+    (9908, 'Unidad operativa Sechura (demo)', 'Camioneta', 'DEM-808')
 ON CONFLICT (codigo) DO NOTHING;
 
 SELECT setval(pg_get_serial_sequence('logis_unidad_maquinaria', 'codigo'),
-              GREATEST((SELECT COALESCE(MAX(codigo), 1) FROM logis_unidad_maquinaria), 9904), true);
+              GREATEST((SELECT COALESCE(MAX(codigo), 1) FROM logis_unidad_maquinaria), 9908), true);
 
-WITH localidades(id_localidad, cod_zonal, proveedor, trabajador, contrato, suministro, cantidad, precio, dia) AS (
+WITH sucursales(cod_zonal, proveedor, trabajador, contrato, centro_costo, codigo_unidad, precio_base) AS (
     VALUES
-        ('05', '01', '20000000001', '90000001', 'DEMO-PIU', 'REGULAR', 15.00::numeric, 22.60::numeric, 2),
-        ('28', '04', '20000000002', '90000002', 'DEMO-SUL', 'DIESEL_B5',  6.00::numeric, 25.10::numeric, 4),
-        ('13', '03', '20000000004', '90000011', 'DEMO-PAI', 'REGULAR',  8.50::numeric, 21.65::numeric, 6),
-        ('37', '05', '20000000005', '90000014', 'DEMO-TAL', 'DIESEL_B5', 10.00::numeric, 25.25::numeric, 8)
+        ('01', '20000000001', '90000001', 'DEMO-PIU', '90211214', 9901, 22.60::numeric),
+        ('02', '20000000006', '90000022', 'DEMO-CHU', '90214202', 9905, 22.10::numeric),
+        ('03', '20000000004', '90000011', 'DEMO-PAI', '90321109', 9903, 21.65::numeric),
+        ('04', '20000000002', '90000002', 'DEMO-SUL', '90214201', 9902, 21.80::numeric),
+        ('05', '20000000005', '90000014', 'DEMO-TAL', '90421109', 9904, 22.25::numeric),
+        ('08', '20000000008', '90000048', 'DEMO-SEC', '90321110', 9908, 22.40::numeric)
+), localidades AS (
+    SELECT l.id_localidad, l.id_zona AS cod_zonal, s.proveedor, s.trabajador,
+           s.contrato, s.centro_costo, s.codigo_unidad, s.precio_base,
+           CASE l.id_localidad::integer % 3
+               WHEN 0 THEN 'DIESEL_B5' WHEN 1 THEN 'REGULAR' ELSE 'GLP' END AS suministro,
+           CASE l.id_localidad::integer % 3
+               WHEN 0 THEN 2.55::numeric WHEN 1 THEN 0::numeric ELSE -13.90::numeric END AS ajuste_precio,
+           5 + (l.id_localidad::integer * 7 % 13) + 0.50::numeric AS cantidad,
+           LEAST(2 + l.id_localidad::integer % 20, EXTRACT(DAY FROM CURRENT_DATE)::integer) AS dia
+      FROM logis_localidad l
+      JOIN sucursales s ON s.cod_zonal = l.id_zona
 ), meses(meses_atras) AS (
     VALUES (0), (1), (2), (3)
 ), consumos AS (
-    SELECT l.*, (date_trunc('month', CURRENT_DATE)::date
+    SELECT l.*, l.cantidad + m.meses_atras AS cantidad_mes,
+           (date_trunc('month', CURRENT_DATE)::date
                  - (m.meses_atras * INTERVAL '1 month')::interval)::date + l.dia - 1 AS fecha
       FROM localidades l CROSS JOIN meses m
 )
@@ -99,13 +127,11 @@ INSERT INTO logis_vales (
 )
 SELECT to_char(fecha, 'YYYYMM') || lpad((900 + id_localidad::integer)::text, 4, '0'),
        cod_zonal, id_localidad, proveedor, contrato, trabajador,
-       fecha::timestamp - INTERVAL '1 day', suministro, cantidad + 1, precio,
-       CASE cod_zonal WHEN '01' THEN '90211214' WHEN '04' THEN '90214201'
-            WHEN '03' THEN '90321109' ELSE '90421109' END,
-       CASE cod_zonal WHEN '01' THEN 9901 WHEN '04' THEN 9902
-            WHEN '03' THEN 9903 ELSE 9904 END,
-       3, 'Vale usado de demostración', fecha::timestamp, cantidad, precio,
-       round(cantidad * precio, 2),
+       fecha::timestamp - INTERVAL '1 day', suministro, cantidad_mes + 2, precio_base,
+       centro_costo, codigo_unidad,
+       3, 'Vale usado de demostración', fecha::timestamp, cantidad_mes,
+       GREATEST(8.30, precio_base + ajuste_precio),
+       round(cantidad_mes * GREATEST(8.30, precio_base + ajuste_precio), 2),
        'T' || to_char(fecha, 'YYYYMM') || lpad((900 + id_localidad::integer)::text, 4, '0'),
        trabajador, TRUE, TRUE
   FROM consumos

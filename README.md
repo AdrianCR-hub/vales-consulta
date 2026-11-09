@@ -32,7 +32,7 @@ Requisitos: JDK 17 o superior, Maven, PostgreSQL y VS Code con **Extension Pack 
    ```powershell
    psql -U postgres -d vales -f database/demo.sql
    ```
-   El demo carga el catálogo de localidades y zonales del proyecto de referencia. Genera vales usados para Castilla, Sullana, Paita y Talara en el mes actual y los tres anteriores. También agrega un vale autorizado y otro anulado para comprobar que no se contabilicen. Se puede ejecutar de nuevo sin duplicar los vales.
+   El demo carga el catálogo de localidades y zonales del proyecto de referencia. Genera vales usados para las 37 localidades, en el mes actual y los tres anteriores (148 vales en total). También agrega un vale autorizado y otro anulado para comprobar que no se contabilicen. Se puede ejecutar de nuevo sin duplicar los vales.
 4. Copia `.env.example` como `.env` en la raíz del proyecto y actualiza el usuario y la contraseña de PostgreSQL. El archivo `.env` es local y no se publica en Git.
 5. Abre la carpeta raíz del proyecto en VS Code. En **Run and Debug**, selecciona **Ejecutar consulta de gastos** y presiona `F5`.
 6. Abre [http://localhost:8080](http://localhost:8080), o el puerto configurado en `.env`. La página permite consultar totales, gastos por municipio y el detalle de vales.
