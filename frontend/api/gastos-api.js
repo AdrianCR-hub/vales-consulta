@@ -22,3 +22,4 @@ async function get(path, filters) {
 export const consultarResumen = (filters) => get("", filters);
 export const consultarDetalle = (filters) => get("/detalle", filters);
 export const consultarTotal = (filters) => get("/total", filters);
+export const consultarMunicipios = () => get("/municipios", {});

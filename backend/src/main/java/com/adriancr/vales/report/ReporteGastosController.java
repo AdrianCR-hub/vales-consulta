@@ -22,9 +22,16 @@ public class ReporteGastosController {
     /** Resumen agrupado por año, mes y municipio (localidad). */
     @GetMapping
     public List<GastoMunicipio> resumen(@RequestParam(required = false) Integer anio,
-                                        @RequestParam(required = false) Integer mes) {
+                                        @RequestParam(required = false) Integer mes,
+                                        @RequestParam(required = false) String municipio) {
         validar(anio, mes);
-        return service.resumen(anio, mes);
+        return service.resumen(anio, mes, municipio);
+    }
+
+    /** Localidades disponibles para el selector del reporte. */
+    @GetMapping("/municipios")
+    public List<Municipio> municipios() {
+        return service.municipios();
     }
 
     /** Detalle de los vales usados, con suministro, para el período indicado. */
@@ -54,6 +61,7 @@ public class ReporteGastosController {
 
     public record GastoMunicipio(int anio, int mes, String municipio, long cantidadVales,
                                  BigDecimal galonesConsumidos, BigDecimal gastoTotal) {}
+    public record Municipio(String idLocalidad, String nombre) {}
     public record DetalleVale(String codigoVale, LocalDate fechaConsumo, String municipio,
                               String suministro, BigDecimal cantidadConsumida,
                               BigDecimal precioReal, BigDecimal importe, String ticket) {}

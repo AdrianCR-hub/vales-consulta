@@ -1,4 +1,4 @@
-import { consultarDetalle, consultarResumen, consultarTotal } from "../../api/gastos-api.js";
+import { consultarDetalle, consultarMunicipios, consultarResumen, consultarTotal } from "../../api/gastos-api.js";
 
 const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const money = (value) => new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN" }).format(value ?? 0);
@@ -12,6 +12,23 @@ const button = document.querySelector("#search");
 const current = new Date();
 document.querySelector("#year").value = current.getFullYear();
 document.querySelector("#month").value = String(current.getMonth() + 1);
+loadMunicipios();
+
+async function loadMunicipios() {
+  const select = document.querySelector("#municipality");
+  try {
+    const rows = await consultarMunicipios();
+    for (const row of rows) {
+      const option = document.createElement("option");
+      option.value = row.idLocalidad;
+      option.textContent = row.nombre;
+      select.append(option);
+    }
+  } catch (error) {
+    feedback.className = "feedback error";
+    feedback.textContent = `No se pudo cargar la lista de municipios: ${error.message}.`;
+  }
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();

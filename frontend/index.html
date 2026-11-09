@@ -41,7 +41,9 @@
               <option value="11">Noviembre</option><option value="12">Diciembre</option>
             </select>
           </label>
-          <label class="municipality-field">Municipio / localidad <input id="municipality" name="municipio" type="search" placeholder="Todos los municipios" /></label>
+          <label class="municipality-field">Municipio / localidad
+            <select id="municipality" name="municipio"><option value="">Todos los municipios</option></select>
+          </label>
           <button id="search" type="submit"><span aria-hidden="true">⌕</span> Consultar gastos</button>
         </form>
         <p class="hint">El gasto se asigna al mes de consumo, no al mes de emisión.</p>

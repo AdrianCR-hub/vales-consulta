@@ -17,7 +17,8 @@ public class ReporteGastosService {
           AND v.fecha_consumo IS NOT NULL
           AND (:anio IS NULL OR EXTRACT(YEAR FROM v.fecha_consumo)::int = :anio)
           AND (:mes IS NULL OR EXTRACT(MONTH FROM v.fecha_consumo)::int = :mes)
-          AND (:municipio IS NULL OR LOWER(l.nom_localidad) = LOWER(:municipio))
+          AND (:municipio IS NULL OR l.id_localidad = :municipio
+               OR LOWER(l.nom_localidad) = LOWER(:municipio))
         """;
 
     private final NamedParameterJdbcTemplate jdbc;
@@ -26,7 +27,7 @@ public class ReporteGastosService {
         this.jdbc = jdbc;
     }
 
-    public List<GastoMunicipio> resumen(Integer anio, Integer mes) {
+    public List<GastoMunicipio> resumen(Integer anio, Integer mes, String municipio) {
         String sql = """
             SELECT EXTRACT(YEAR FROM v.fecha_consumo)::int AS anio,
                    EXTRACT(MONTH FROM v.fecha_consumo)::int AS mes,
@@ -40,10 +41,18 @@ public class ReporteGastosService {
             GROUP BY 1, 2, 3
             ORDER BY 1 DESC, 2 DESC, 3
             """;
-        return jdbc.query(sql, params(anio, mes, null), (rs, row) -> new GastoMunicipio(
+        return jdbc.query(sql, params(anio, mes, limpio(municipio)), (rs, row) -> new GastoMunicipio(
             rs.getInt("anio"), rs.getInt("mes"), rs.getString("municipio"),
             rs.getLong("cantidad_vales"), rs.getBigDecimal("galones_consumidos"),
             rs.getBigDecimal("gasto_total")));
+    }
+
+    public List<Municipio> municipios() {
+        return jdbc.query("""
+            SELECT id_localidad, nom_localidad
+              FROM logis_localidad
+             ORDER BY nom_localidad, id_localidad
+            """, (rs, row) -> new Municipio(rs.getString("id_localidad"), rs.getString("nom_localidad")));
     }
 
     public List<DetalleVale> detalle(Integer anio, Integer mes, String municipio) {
