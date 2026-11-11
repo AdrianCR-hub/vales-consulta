@@ -55,12 +55,12 @@ Si no se carga `database/demo.sql` ni otros datos, los reportes mostrarán ceros
 
 ## API
 
-- `GET /api/reportes/gastos?anio=2025&mes=4`: gasto agrupado por año, mes y localidad registrada en el vale.
+- `GET /api/reportes/gastos?anio=2025&mes=4`: gasto agrupado por año, mes, tipo de combustible y localidad registrada en el vale.
 - `GET /api/reportes/gastos/localidades`: catálogo de localidades, agrupadas por zonal, para el selector.
 - `GET /api/reportes/gastos/detalle?anio=2025&mes=4&localidad=05`: detalle de vales usados en la localidad seleccionada, incluido el suministro.
 - `GET /api/reportes/gastos/total?anio=2025&mes=4`: consolidado final; también acepta el filtro `localidad`.
 
-Los filtros son opcionales. `localidad` acepta el código o nombre de una entrada del catálogo. En este sistema una localidad es la ubicación operativa del vale, agrupada bajo una zonal; no es una clasificación uniforme de provincias y distritos. `fecha_consumo` determina el período del gasto. Se suma `importe` y, cuando no está registrado, se calcula `cantidad_consumida * precio_real`.
+Los filtros son opcionales. `localidad` acepta el código o nombre de una entrada del catálogo. En este sistema una localidad es la ubicación operativa del vale, agrupada bajo una zonal; no es una clasificación uniforme de provincias y distritos. `fecha_consumo` determina el período del gasto. Se suma `importe` y, cuando no está registrado, se calcula `cantidad_consumida * precio_real`. La página muestra un gráfico mensual y un resumen con mes y combustible.
 
 ## Esquema PostgreSQL
 

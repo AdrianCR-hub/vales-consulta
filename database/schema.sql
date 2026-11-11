@@ -1,6 +1,3 @@
--- Esquema corregido para PostgreSQL, alineado con los nombres usados por la API.
--- Ejecutar dentro de la base `vales` en una instalación nueva.
-
 CREATE TABLE IF NOT EXISTS logis_zonal (
     id_zona VARCHAR(2) PRIMARY KEY,
     nom_zona VARCHAR(100) NOT NULL

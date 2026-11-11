@@ -73,8 +73,28 @@ function render(summary, total, details, filters) {
   const period = filters.mes ? `${months[Number(filters.mes) - 1]} de ${filters.anio}` : `Todos los meses de ${filters.anio}`;
   document.querySelector("#period-label").textContent = period;
 
+  const monthlyTotals = new Map();
+  for (const row of summary) {
+    const key = `${row.anio}-${row.mes}`;
+    monthlyTotals.set(key, (monthlyTotals.get(key) ?? 0) + Number(row.gastoTotal ?? 0));
+  }
+  const chartRows = [...monthlyTotals.entries()]
+    .map(([key, amount]) => {
+      const [year, month] = key.split("-").map(Number);
+      return { year, month, amount };
+    })
+    .sort((a, b) => a.year - b.year || a.month - b.month);
+  const chartMax = Math.max(...chartRows.map((row) => row.amount), 0);
+  document.querySelector("#expense-chart").innerHTML = chartRows.length
+    ? chartRows.map((row) => {
+        const label = `${months[row.month - 1]} ${row.year}`;
+        const width = chartMax > 0 ? (row.amount / chartMax) * 100 : 0;
+        return `<div class="chart-row"><span class="chart-label">${safe(label)}</span><span class="chart-track"><span class="chart-bar" style="width:${width}%"></span></span><strong class="chart-value">${money(row.amount)}</strong></div>`;
+      }).join("")
+    : '<p class="empty chart-empty">No hay gastos para mostrar en el gráfico.</p>';
+
   const summaryRows = document.querySelector("#summary-rows");
-  summaryRows.innerHTML = summary.map((row) => `<tr><td><span class="municipality-dot"></span>${safe(row.localidad)}</td><td class="numeric">${number(row.cantidadVales, 0)}</td><td class="numeric">${number(row.galonesConsumidos)}</td><td class="numeric amount">${money(row.gastoTotal)}</td></tr>`).join("");
+  summaryRows.innerHTML = summary.map((row) => `<tr><td>${safe(months[row.mes - 1])} ${row.anio}</td><td>${safe(row.combustible)}</td><td><span class="municipality-dot"></span>${safe(row.localidad)}</td><td class="numeric">${number(row.cantidadVales, 0)}</td><td class="numeric">${number(row.galonesConsumidos)}</td><td class="numeric amount">${money(row.gastoTotal)}</td></tr>`).join("");
   document.querySelector("#summary-empty").hidden = summary.length > 0;
 
   const detailRows = document.querySelector("#detail-rows");

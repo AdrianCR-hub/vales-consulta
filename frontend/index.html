@@ -41,12 +41,12 @@
               <option value="11">Noviembre</option><option value="12">Diciembre</option>
             </select>
           </label>
-          <label class="locality-field">Localidad del vale
+          <label class="locality-field">Localidad
             <select id="locality" name="localidad"><option value="">Todas las localidades</option></select>
           </label>
           <button id="search" type="submit"><span aria-hidden="true">⌕</span> Consultar gastos</button>
         </form>
-        <p class="hint">La localidad se agrupa dentro de su zonal operativa; no representa una clasificación de provincias y distritos. El gasto se asigna al mes de consumo.</p>
+        <p class="hint"> </p>
       </section>
 
       <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
@@ -57,9 +57,14 @@
           <article class="metric"><span class="metric-icon">↗</span><div><p>Consumo total</p><strong id="total-gallons">0 gal</strong></div></article>
         </div>
 
+        <section class="panel chart-panel" aria-labelledby="chart-title">
+          <div class="panel-heading table-heading"><div><p class="eyebrow">TENDENCIA</p><h2 id="chart-title">Gasto por mes</h2></div><span class="period-label">Importes en soles</span></div>
+          <div id="expense-chart" class="expense-chart" role="img" aria-label="Gráfico de gastos mensuales"></div>
+        </section>
+
         <section class="panel table-panel">
           <div class="panel-heading table-heading"><div><p class="eyebrow">RESUMEN</p><h2>Gasto por localidad</h2></div><span id="period-label" class="period-label"></span></div>
-          <div class="table-wrap"><table><thead><tr><th>Localidad del vale</th><th class="numeric">Vales</th><th class="numeric">Consumo (gal)</th><th class="numeric">Gasto total</th></tr></thead><tbody id="summary-rows"></tbody></table></div>
+          <div class="table-wrap"><table><thead><tr><th>Mes</th><th>Tipo de combustible</th><th>Localidad del vale</th><th class="numeric">Vales</th><th class="numeric">Consumo (gal)</th><th class="numeric">Gasto total</th></tr></thead><tbody id="summary-rows"></tbody></table></div>
           <p id="summary-empty" class="empty" hidden>No hay vales usados para las localidades y el período seleccionados.</p>
         </section>
 

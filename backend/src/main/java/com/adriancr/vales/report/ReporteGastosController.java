@@ -62,7 +62,7 @@ public class ReporteGastosController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El mes debe estar entre 1 y 12.");
     }
 
-    public record GastoLocalidad(int anio, int mes, String localidad, long cantidadVales,
+    public record GastoLocalidad(int anio, int mes, String localidad, String combustible, long cantidadVales,
                                  BigDecimal galonesConsumidos, BigDecimal gastoTotal) {}
     public record Localidad(String idZona, String zona, String idLocalidad, String nombre) {}
     public record DetalleVale(String codigoVale, LocalDate fechaConsumo, String municipio,

@@ -31,18 +31,25 @@ public class ReporteGastosService {
         String sql = """
             SELECT EXTRACT(YEAR FROM v.fecha_consumo)::int AS anio,
                    EXTRACT(MONTH FROM v.fecha_consumo)::int AS mes,
-            l.nom_localidad AS localidad,
+                   l.nom_localidad AS localidad,
+                   CASE v.id_suministro
+                       WHEN 'REGULAR' THEN 'Gasolina regular'
+                       WHEN 'PREMIUM' THEN 'Gasolina premium'
+                       WHEN 'DIESEL_B5' THEN 'Diésel B5'
+                       WHEN 'GLP' THEN 'GLP'
+                       ELSE v.id_suministro
+                   END AS combustible,
                    COUNT(*) AS cantidad_vales,
                    COALESCE(SUM(v.cantidad_consumida), 0) AS galones_consumidos,
                    COALESCE(SUM(COALESCE(v.importe, v.cantidad_consumida * v.precio_real)), 0) AS gasto_total
               FROM logis_vales v
               JOIN logis_localidad l ON l.id_localidad = v.cod_localidad
             """ + FILTER + """
-            GROUP BY 1, 2, 3
-            ORDER BY 1 DESC, 2 DESC, 3
+            GROUP BY 1, 2, 3, 4
+            ORDER BY 1 DESC, 2 DESC, 4, 3
             """;
         return jdbc.query(sql, params(anio, mes, limpio(localidad)), (rs, row) -> new GastoLocalidad(
-            rs.getInt("anio"), rs.getInt("mes"), rs.getString("localidad"),
+            rs.getInt("anio"), rs.getInt("mes"), rs.getString("localidad"), rs.getString("combustible"),
             rs.getLong("cantidad_vales"), rs.getBigDecimal("galones_consumidos"),
             rs.getBigDecimal("gasto_total")));
     }
